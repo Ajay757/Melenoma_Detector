@@ -61,13 +61,17 @@ if uploaded_file:
     # Results
     st.subheader(f"🔍 Prediction: **{CLASS_NAMES[pred_class]}**")
 
+    # Display probabilities side by side
+    col1, col2 = st.columns(2)
+    col1.metric(label="Benign Probability", value=f"{benign_prob:.2f}")
+    col2.metric(label="Malignant Probability", value=f"{malignant_prob:.2f}")
+
+    # Highlight result
     if pred_class == 1:
-        st.metric(label="Confidence (Malignant)", value=f"{malignant_prob:.2f}")
         st.warning("⚠️ Model flagged this image as **Malignant**. Please seek medical advice.")
     else:
-        st.metric(label="Confidence (Benign)", value=f"{benign_prob:.2f}")
         st.success("Model flagged this image as **Benign**.")
-        
+
 # ---------------------------
 # Footer
 # ---------------------------

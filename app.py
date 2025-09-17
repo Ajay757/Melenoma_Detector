@@ -42,12 +42,6 @@ st.markdown(
 uploaded_file = st.file_uploader("📷 Upload a skin image (JPG or PNG)", type=["jpg", "jpeg", "png"])
 
 # ---------------------------
-# Threshold Slider
-# ---------------------------
-threshold = st.slider("Decision Threshold", 0.1, 0.9, 0.5, 0.01,
-                      help="Probability above this threshold will be classified as malignant.")
-
-# ---------------------------
 # Prediction
 # ---------------------------
 if uploaded_file:

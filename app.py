@@ -31,7 +31,7 @@ st.markdown(
     This tool uses a **Convolutional Neural Network (CNN)** trained on mole/skin lesion images  
     to predict whether a mole is **benign** or **malignant**.
 
-    ⚠️ **Disclaimer**: This tool is for **educational purposes only** and **not a medical diagnostic device**.  
+    ⚠️ **Disclaimer**: This tool is for **educational purposes only** and is **not a medical diagnostic device**.  
     Always consult a qualified healthcare professional for medical concerns.
     """
 )
@@ -55,19 +55,19 @@ if uploaded_file:
 
     # Predict
     prob = float(model.predict(arr, verbose=0)[0][0])
-    pred_class = 1 if prob > threshold else 0
+    pred_class = 1 if prob > 0.5 else 0  # fixed threshold
 
     # Results
     st.subheader(f"🔍 Prediction: **{CLASS_NAMES[pred_class]}**")
     st.metric(label="Confidence (malignant probability)", value=f"{prob:.2f}")
 
     if pred_class == 1:
-        st.warning("⚠️ Model flagged this image as **Malignant** (above threshold). Please seek medical advice.")
+        st.warning("⚠️ Model flagged this image as **Malignant** (above 0.5 probability). Please seek medical advice.")
     else:
-        st.success("Model flagged this image as **Benign** (below threshold).")
+        st.success("✅ Model flagged this image as **Benign** (below 0.5 probability).")
 
 # ---------------------------
 # Footer
 # ---------------------------
 st.markdown("---")
-st.caption("Made with using Streamlit and TensorFlow")
+st.caption("Made with ❤️ using Streamlit and TensorFlow")

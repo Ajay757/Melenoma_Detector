@@ -3,41 +3,77 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 
-st.set_page_config(page_title="Melanoma Detector", page_icon="🩺", layout="centered")
+# ---------------------------
+# Page Config
+# ---------------------------
+st.set_page_config(
+    page_title="Melanoma Detector",
+    page_icon="🩺",
+    layout="centered"
+)
 
+# ---------------------------
+# Load Model (cached)
+# ---------------------------
 @st.cache_resource
 def load_model():
-    # Load once & cache
-    model = tf.keras.models.load_model("melanoma_cnn.h5")
-    return model
+    return tf.keras.models.load_model("melanoma_cnn1.h5")
 
 model = load_model()
 CLASS_NAMES = {0: "Benign", 1: "Malignant"}
 
-st.title("🩺 Melanoma Detection (Demo)")
-st.write("Upload a mole/skin lesion image and the model will predict if it's benign or malignant.")
+# ---------------------------
+# App Header
+# ---------------------------
+st.title("🩺 Melanoma Detection App")
+st.markdown(
+    """
+    This tool uses a **Convolutional Neural Network (CNN)** trained on mole/skin lesion images  
+    to predict whether a mole is **benign** or **malignant**.
 
-# Threshold control (helps tune recall vs precision)
-th = st.slider("Decision threshold (malignant if probability > threshold)", 0.05, 0.95, 0.50, 0.01)
+    ⚠️ **Disclaimer**: This tool is for **educational purposes only** and **not a medical diagnostic device**.  
+    Always consult a qualified healthcare professional for medical concerns.
+    """
+)
 
-uploaded = st.file_uploader("Choose a skin image (jpg/png)", type=["jpg", "jpeg", "png"])
+# ---------------------------
+# File Upload
+# ---------------------------
+uploaded_file = st.file_uploader("📷 Upload a skin image (JPG or PNG)", type=["jpg", "jpeg", "png"])
 
-if uploaded:
-    # Ensure 3 channels and resize to the size you trained on (150x150)
-    img = Image.open(uploaded).convert("RGB").resize((150, 150))
-    st.image(img, caption="Uploaded image", use_column_width=True)
+# ---------------------------
+# Threshold Slider
+# ---------------------------
+threshold = st.slider("Decision Threshold", 0.1, 0.9, 0.5, 0.01,
+                      help="Probability above this threshold will be classified as malignant.")
+
+# ---------------------------
+# Prediction
+# ---------------------------
+if uploaded_file:
+    # Load image
+    img = Image.open(uploaded_file).convert("RGB").resize((150, 150))
+    st.image(img, caption="Uploaded Image", use_column_width=True)
 
     # Preprocess
-    arr = np.array(img, dtype=np.float32) / 255.0
-    arr = np.expand_dims(arr, axis=0)  # shape: (1, 150, 150, 3)
+    arr = np.array(img) / 255.0
+    arr = np.expand_dims(arr, axis=0)
 
     # Predict
-    prob = float(model.predict(arr, verbose=0)[0][0])  # probability of class "1" (malignant)
-    pred_class = 1 if prob > th else 0
+    prob = float(model.predict(arr, verbose=0)[0][0])
+    pred_class = 1 if prob > threshold else 0
 
-    st.subheader(f"Prediction: **{CLASS_NAMES[pred_class]}**")
-    st.write(f"Model malignant probability: **{prob:.2f}**")
-    st.caption("Tip: move the threshold slider to trade precision vs recall.")
+    # Results
+    st.subheader(f"🔍 Prediction: **{CLASS_NAMES[pred_class]}**")
+    st.metric(label="Confidence (malignant probability)", value=f"{prob:.2f}")
 
+    if pred_class == 1:
+        st.warning("⚠️ Model flagged this image as **Malignant** (above threshold). Please seek medical advice.")
+    else:
+        st.success("Model flagged this image as **Benign** (below threshold).")
+
+# ---------------------------
+# Footer
+# ---------------------------
 st.markdown("---")
-st.caption("⚠️ Educational demo only. Not a medical device. Not a substitute for professional diagnosis.")
+st.caption("Made with using Streamlit and TensorFlow")

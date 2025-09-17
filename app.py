@@ -17,7 +17,7 @@ st.set_page_config(
 # ---------------------------
 @st.cache_resource
 def load_model():
-    return tf.keras.models.load_model("melanoma_cnn1.h5")
+    return tf.keras.models.load_model("melanoma_cnn.h5")
 
 model = load_model()
 CLASS_NAMES = {0: "Benign", 1: "Malignant"}
@@ -54,20 +54,6 @@ if uploaded_file:
     arr = np.expand_dims(arr, axis=0)
 
     # Predict
-    prob = float(model.predict(arr, verbose=0)[0][0])
-    pred_class = 1 if prob > 0.5 else 0  # fixed threshold
-
-    # Results
-    st.subheader(f"🔍 Prediction: **{CLASS_NAMES[pred_class]}**")
-    st.metric(label="Confidence (malignant probability)", value=f"{prob:.2f}")
-
-    if pred_class == 1:
-        st.warning("⚠️ Model flagged this image as **Malignant** (above 0.5 probability). Please seek medical advice.")
-    else:
-        st.success("✅ Model flagged this image as **Benign** (below 0.5 probability).")
-
-# ---------------------------
-# Footer
-# ---------------------------
-st.markdown("---")
-st.caption("Made with ❤️ using Streamlit and TensorFlow")
+    malignant_prob = float(model.predict(arr, verbose=0)[0][0])
+    benign_prob = 1 - malignant_prob
+    pred_class =_

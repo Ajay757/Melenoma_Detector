@@ -56,4 +56,20 @@ if uploaded_file:
     # Predict
     malignant_prob = float(model.predict(arr, verbose=0)[0][0])
     benign_prob = 1 - malignant_prob
-    pred_class =_
+    pred_class = 1 if malignant_prob > 0.5 else 0
+
+    # Results
+    st.subheader(f"🔍 Prediction: **{CLASS_NAMES[pred_class]}**")
+
+    if pred_class == 1:
+        st.metric(label="Confidence (Malignant)", value=f"{malignant_prob:.2f}")
+        st.warning("⚠️ Model flagged this image as **Malignant**. Please seek medical advice.")
+    else:
+        st.metric(label="Confidence (Benign)", value=f"{benign_prob:.2f}")
+        st.success("Model flagged this image as **Benign**.")
+        
+# ---------------------------
+# Footer
+# ---------------------------
+st.markdown("---")
+st.caption("Made with using Streamlit and TensorFlow")

@@ -58,13 +58,17 @@ if uploaded_file:
     benign_prob = 1 - malignant_prob
     pred_class = 1 if malignant_prob > 0.5 else 0
 
+    # Convert to percentages
+    malignant_pct = malignant_prob * 100
+    benign_pct = benign_prob * 100
+
     # Results
     st.subheader(f"🔍 Prediction: **{CLASS_NAMES[pred_class]}**")
 
     # Display probabilities side by side
     col1, col2 = st.columns(2)
-    col1.metric(label="Benign Probability", value=f"{benign_prob:.2f}")
-    col2.metric(label="Malignant Probability", value=f"{malignant_prob:.2f}")
+    col1.metric(label="Benign Probability", value=f"{benign_pct:.1f}%")
+    col2.metric(label="Malignant Probability", value=f"{malignant_pct:.1f}%")
 
     # Highlight result
     if pred_class == 1:

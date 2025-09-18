@@ -39,7 +39,7 @@ st.markdown(
 # ---------------------------
 # File Upload
 # ---------------------------
-uploaded_file = st.file_uploader("📷 Upload a skin image (JPG or PNG)", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Upload a skin image (JPG or PNG)", type=["jpg", "jpeg", "png"])
 
 # ---------------------------
 # Prediction
